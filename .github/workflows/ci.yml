@@ -12,26 +12,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Download repository code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Set up Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      # Install dependencies
-      - name: Install dependencies
+      - name: Install dependencies from uv.lock
         run: |
           pip install uv
-          uv pip install -r requirements.txt || uv pip install fastapi uvicorn pandas numpy scikit-learn pytest pytest-cov locust
+          uv sync --frozen --all-extras --dev
 
-      # Run model tests
+      # Clone data
+      - name: Ensure data file exists for tests
+        run: |
+          mkdir -p data tests/data
+          cp data/data.csv tests/data/data.csv || true
+
+      # Model test
       - name: Run model tests
-        run: uv run pytest tests/model --cov=challenge --cov-report term
+        working-directory: tests/model
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Listing parent directory:"
+          ls ../data || echo "No ../data found"
+          uv run pytest . --cov=challenge --cov-report term
 
-      # Run API tests
+      # API test
       - name: Run API tests
-        run: uv run pytest tests/api --cov=challenge --cov-report term
+        run: |
+          uv run pytest tests/api --cov=challenge --cov-report term
