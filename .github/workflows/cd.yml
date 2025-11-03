@@ -10,24 +10,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Download repository code
+      #Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # set up Google Cloud SDK
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
+      #Authenticate to Google Cloud (usando tu secreto JSON)
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
         with:
-          project_id: flight-api-nicolramirez
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      # build and push Docker image to Google Container Registry
+      #Configure gcloud CLI (activar cuenta)
+      - name: Configure gcloud
+        run: |
+          gcloud auth activate-service-account --key-file=${{ steps.auth.outputs.credentials_file_path }}
+          gcloud config set project flight-api-nicolramirez
+          gcloud config set compute/region us-central1
+          gcloud auth list
+
+      #Build and push Docker image
       - name: Build and push Docker image
         run: |
           gcloud builds submit --tag gcr.io/flight-api-nicolramirez/delay-api .
 
-      # deploy to Cloud Run
+      #Deploy to Cloud Run
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy delay-api \
