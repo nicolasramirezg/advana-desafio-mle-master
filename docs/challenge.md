@@ -46,3 +46,4 @@ OPERA_Copa Air
 - The model can still predict even if `fit()` was not called (for robustness in API contexts).
 - All tests (`make model-test`) pass successfully with **~90 % coverage**.
 
+## 5. Testing ci/cd deployment comment
