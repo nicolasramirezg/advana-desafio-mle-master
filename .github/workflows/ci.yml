@@ -26,6 +26,12 @@ jobs:
           pip install uv
           uv sync --frozen --all-extras --dev
 
+      # data for testing
+      - name: Ensure data file exists
+        run: |
+          mkdir -p data
+          cp data/data.csv .
+
       # test
       - name: Run model tests
         run: uv run pytest tests/model --cov=challenge --cov-report term
