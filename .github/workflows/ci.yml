@@ -25,18 +25,18 @@ jobs:
           pip install uv
           uv sync --frozen --all-extras --dev
 
-      # clone
+      # Clone data
       - name: Ensure data file exists for tests
         run: |
           mkdir -p data tests/data
           cp data/data.csv tests/data/data.csv || true
 
-      # test
+      # Model test
       - name: Run model tests
         run: |
           uv run pytest tests/model --cov=challenge --cov-report term
 
-      # api test
+      # API test
       - name: Run API tests
         run: |
           uv run pytest tests/api --cov=challenge --cov-report term
