@@ -1,7 +1,37 @@
-name: 'Continuous Integration'
+name: CI - Build and Test
 
 on:
-  ...
+  push:
+    branches:
+      - develop
+      - feature/**
+  pull_request:
 
 jobs:
-  ...
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Download repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          pip install uv
+          uv pip install -r requirements.txt || uv pip install fastapi uvicorn pandas numpy scikit-learn pytest pytest-cov locust
+
+      # Run model tests
+      - name: Run model tests
+        run: uv run pytest tests/model --cov=challenge --cov-report term
+
+      # Run API tests
+      - name: Run API tests
+        run: uv run pytest tests/api --cov=challenge --cov-report term
