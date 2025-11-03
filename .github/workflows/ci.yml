@@ -33,8 +33,12 @@ jobs:
 
       # Model test
       - name: Run model tests
+        working-directory: tests/model
         run: |
-          uv run pytest tests/model --cov=challenge --cov-report term
+          echo "Current directory: $(pwd)"
+          echo "Listing parent directory:"
+          ls ../data || echo "No ../data found"
+          uv run pytest . --cov=challenge --cov-report term
 
       # API test
       - name: Run API tests
