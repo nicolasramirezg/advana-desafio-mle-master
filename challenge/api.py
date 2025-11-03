@@ -67,6 +67,3 @@ def predict(data: FlightsInput):
         raise
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Prediction failed: {str(e)}")
-
-async def post_predict() -> dict:
-    return
