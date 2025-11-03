@@ -20,22 +20,23 @@ jobs:
         with:
           python-version: "3.12"
 
-      # uv sync
       - name: Install dependencies from uv.lock
         run: |
           pip install uv
           uv sync --frozen --all-extras --dev
 
-      # data for testing
-      - name: Ensure data file exists
+      # clone
+      - name: Ensure data file exists for tests
         run: |
-          mkdir -p tests/data
-          cp data/data.csv tests/data/data.csv
+          mkdir -p data tests/data
+          cp data/data.csv tests/data/data.csv || true
 
       # test
       - name: Run model tests
-        run: uv run pytest tests/model --cov=challenge --cov-report term
+        run: |
+          uv run pytest tests/model --cov=challenge --cov-report term
 
-      # test api 
+      # api test
       - name: Run API tests
-        run: uv run pytest tests/api --cov=challenge --cov-report term
+        run: |
+          uv run pytest tests/api --cov=challenge --cov-report term
