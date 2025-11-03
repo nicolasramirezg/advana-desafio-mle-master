@@ -29,8 +29,8 @@ jobs:
       # data for testing
       - name: Ensure data file exists
         run: |
-          mkdir -p data
-          cp data/data.csv .
+          mkdir -p tests/data
+          cp data/data.csv tests/data/data.csv
 
       # test
       - name: Run model tests
